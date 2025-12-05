@@ -38,12 +38,14 @@ internal fun Modifier.introShowcaseTarget(
     index: Int,
     style: ShowcaseStyle = ShowcaseStyle.Default,
     content: @Composable BoxScope.() -> Unit,
+    onTargetClick: () -> Unit = {}
 ): Modifier = onGloballyPositioned { coordinates ->
     state.targets[index] = IntroShowcaseTargets(
         index = index,
         coordinates = coordinates,
         style = style,
-        content = content
+        content = content,
+        onTargetClick = onTargetClick
     )
 }
 

@@ -173,6 +173,7 @@ internal fun ShowcaseContent(
                 .pointerInput(target) {
                     detectTapGestures { tapOffeset ->
                         if (targetRect.contains(tapOffeset)) {
+                            target.onTargetClick()
                             dismissShowcaseRequest = true
                         }
                     }
@@ -278,7 +279,8 @@ data class IntroShowcaseTargets(
     val index: Int,
     val coordinates: LayoutCoordinates,
     val style: ShowcaseStyle = ShowcaseStyle.Default,
-    val content: @Composable BoxScope.() -> Unit
+    val content: @Composable BoxScope.() -> Unit,
+    val onTargetClick: () -> Unit = {}
 )
 
 class ShowcaseStyle(

@@ -45,10 +45,12 @@ class IntroShowcaseScope(
         index: Int,
         style: ShowcaseStyle = ShowcaseStyle.Default,
         content: @Composable BoxScope.() -> Unit,
+        onTargetClick: () -> Unit = {}
     ): Modifier = introShowcaseTarget(
         state = state,
         index = index,
         style = style,
         content = content,
+        onTargetClick = onTargetClick
     )
 }
