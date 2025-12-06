@@ -1,6 +1,7 @@
 package com.canopas.campose.showcase
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +53,7 @@ import com.canopas.lib.showcase.IntroShowcase
 import com.canopas.lib.showcase.IntroShowcaseScope
 import com.canopas.lib.showcase.component.IntroShowcaseState
 import com.canopas.lib.showcase.component.ShowcaseStyle
+import com.canopas.lib.showcase.component.TargetShape
 import com.canopas.lib.showcase.component.rememberIntroShowcaseState
 
 class MainActivity : ComponentActivity() {
@@ -99,14 +103,22 @@ fun ShowcaseSample() {
                         BackButton(introShowcaseState)
                     },
                     actions = {
+                        val context = LocalContext.current
+                        val onSearchClick = remember {
+                            {
+                                Toast.makeText(context, "Search clicked!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
                         IconButton(
-                            onClick = {},
+                            onClick = onSearchClick,
                             modifier = Modifier.introShowCaseTarget(
                                 index = 0,
                                 style = ShowcaseStyle.Default.copy(
                                     backgroundColor = Color(0xFF9AD0EC), // specify color of background
                                     backgroundAlpha = 0.98f, // specify transparency of background
-                                    targetCircleColor = Color.White // specify color of target circle
+                                    targetShape = TargetShape.RoundedRectangle(),
+                                    targetColor = Color.White // specify color of target circle
                                 ),
                                 content = {
                                     Column {
@@ -128,7 +140,8 @@ fun ShowcaseSample() {
                                             fontSize = 16.sp
                                         )
                                     }
-                                }
+                                },
+                                onTargetClick = onSearchClick
                             )
                         ) {
                             Icon(Icons.Filled.Search, contentDescription = "Search")
@@ -148,14 +161,21 @@ fun ShowcaseSample() {
 
 @Composable
 fun IntroShowcaseScope.FloatingMailButton() {
+    val context = LocalContext.current
+    val onEmailClick = remember {
+        {
+            Toast.makeText(context, "Email clicked!", Toast.LENGTH_SHORT).show()
+        }
+    }
     FloatingActionButton(
-        onClick = {},
+        onClick = onEmailClick,
         modifier = Modifier.introShowCaseTarget(
             index = 1,
             style = ShowcaseStyle.Default.copy(
                 backgroundColor = Color(0xFF1C0A00), // specify color of background
                 backgroundAlpha = 0.98f, // specify transparency of background
-                targetCircleColor = Color.White // specify color of target circle
+                targetColor = Color.White, // specify color of target circle
+                targetShape = TargetShape.Circle // Keep circle for FAB
             ),
             // specify the content to show to introduce app feature
             content = {
@@ -181,7 +201,8 @@ fun IntroShowcaseScope.FloatingMailButton() {
                         tint = Color.White
                     )
                 }
-            }
+            },
+            onTargetClick = onEmailClick
         ),
         backgroundColor = ThemeColor,
         contentColor = Color.White,
@@ -197,14 +218,21 @@ fun IntroShowcaseScope.FloatingMailButton() {
 
 @Composable
 fun IntroShowcaseScope.BackButton(introShowcaseState: IntroShowcaseState) {
+    val context = LocalContext.current
+    val onBackClick = remember {
+        {
+            Toast.makeText(context, "Back clicked!", Toast.LENGTH_SHORT).show()
+        }
+    }
     IconButton(
-        onClick = {},
+        onClick = onBackClick,
         modifier = Modifier.introShowCaseTarget(
             index = 4,
             style = ShowcaseStyle.Default.copy(
                 backgroundColor = Color(0xFF7C99AC), // specify color of background
                 backgroundAlpha = 0.98f, // specify transparency of background
-                targetCircleColor = Color.White // specify color of target circle
+                targetColor = Color.White, // specify color of target circle
+                targetShape = TargetShape.RoundedRectangle(cornerRadius = 24.dp)
             ),
             content = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -239,6 +267,7 @@ fun IntroShowcaseScope.BackButton(introShowcaseState: IntroShowcaseState) {
                     }
                 }
             },
+            onTargetClick = onBackClick
         )
     ) {
         Icon(Icons.Filled.ArrowBack, contentDescription = "Search")
@@ -247,6 +276,9 @@ fun IntroShowcaseScope.BackButton(introShowcaseState: IntroShowcaseState) {
 
 @Composable
 fun IntroShowcaseScope.Content(modifier: Modifier) {
+    val context = LocalContext.current
+    var counter by remember { mutableIntStateOf(0) }
+
     Box(modifier = modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxHeight(0.3f)) {
 
@@ -283,7 +315,7 @@ fun IntroShowcaseScope.Content(modifier: Modifier) {
                         style = ShowcaseStyle.Default.copy(
                             backgroundColor = Color(0xFFFFCC80), // specify color of background
                             backgroundAlpha = 0.98f, // specify transparency of background
-                            targetCircleColor = Color.White // specify color of target circle
+                            targetColor = Color.White // specify color of target circle
                         ),
                         content = {
                             Column(
@@ -308,14 +340,20 @@ fun IntroShowcaseScope.Content(modifier: Modifier) {
                     )
             )
         }
-
+        val onFollowClick: () -> Unit = {
+            counter += 1
+            Toast.makeText(context, "Пупупу", Toast.LENGTH_SHORT).show()
+        }
         Button(
-            onClick = {},
+            onClick = onFollowClick,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 16.dp, bottom = 16.dp)
                 .introShowCaseTarget(
                     index = 3,
+                    style = ShowcaseStyle.Default.copy(
+                        targetShape = TargetShape.RoundedRectangle(cornerRadius = 16.dp)
+                    ),
                     content = {
                         Column {
                             Text(
@@ -330,10 +368,11 @@ fun IntroShowcaseScope.Content(modifier: Modifier) {
                                 fontSize = 16.sp
                             )
                         }
-                    }
+                    },
+                    onTargetClick = onFollowClick
                 )
         ) {
-            Text(text = "Follow")
+            Text(text = "Follow $counter")
         }
     }
 

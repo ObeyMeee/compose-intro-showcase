@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,6 +44,11 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
+
+sealed class TargetShape {
+    object Circle : TargetShape()
+    data class RoundedRectangle(val cornerRadius: Dp = 8.dp) : TargetShape()
+}
 
 @Composable
 fun ShowcasePopup(
@@ -171,8 +177,8 @@ internal fun ShowcaseContent(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(target) {
-                    detectTapGestures { tapOffeset ->
-                        if (targetRect.contains(tapOffeset)) {
+                    detectTapGestures { tapOffset ->
+                        if (targetRect.contains(tapOffset)) {
                             target.onTargetClick()
                             dismissShowcaseRequest = true
                         }
@@ -196,20 +202,67 @@ internal fun ShowcaseContent(
             )
 
             dys.forEach { dy ->
-                drawCircle(
-                    color = target.style.targetCircleColor,
-                    radius = maxDimension * dy * 2f,
-                    center = targetRect.center,
-                    alpha = 1 - dy
-                )
+                when (target.style.targetShape) {
+                    is TargetShape.Circle -> {
+                        drawCircle(
+                            color = target.style.targetColor,
+                            radius = maxDimension * dy * 2f,
+                            center = targetRect.center,
+                            alpha = 1 - dy
+                        )
+                    }
+
+                    is TargetShape.RoundedRectangle -> {
+                        val shape = target.style.targetShape
+                        val expansion = maxDimension * dy * 2f
+                        drawRoundRect(
+                            color = target.style.targetColor,
+                            topLeft = Offset(
+                                targetRect.left - expansion,
+                                targetRect.top - expansion
+                            ),
+                            size = androidx.compose.ui.geometry.Size(
+                                targetRect.width + expansion * 2,
+                                targetRect.height + expansion * 2
+                            ),
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(
+                                shape.cornerRadius.toPx()
+                            ),
+                            alpha = 1 - dy
+                        )
+                    }
+                }
             }
 
-            drawCircle(
-                color = target.style.targetCircleColor,
-                radius = targetRadius,
-                center = targetRect.center,
-                blendMode = BlendMode.Xor
-            )
+            when (target.style.targetShape) {
+                is TargetShape.Circle -> {
+                    drawCircle(
+                        color = target.style.targetColor,
+                        radius = targetRadius,
+                        center = targetRect.center,
+                        blendMode = BlendMode.Xor
+                    )
+                }
+
+                is TargetShape.RoundedRectangle -> {
+                    val shape = target.style.targetShape
+                    drawRoundRect(
+                        color = target.style.targetColor,
+                        topLeft = Offset(
+                            targetRect.left - 40f,
+                            targetRect.top - 40f
+                        ),
+                        size = androidx.compose.ui.geometry.Size(
+                            targetRect.width + 80f,
+                            targetRect.height + 80f
+                        ),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(
+                            shape.cornerRadius.toPx()
+                        ),
+                        blendMode = BlendMode.Xor
+                    )
+                }
+            }
         }
 
         ShowCaseText(target, targetRect, targetRadius) { textCoords ->
@@ -287,20 +340,23 @@ class ShowcaseStyle(
     val backgroundColor: Color = Color.Black,
     /*@FloatRange(from = 0.0, to = 1.0)*/
     val backgroundAlpha: Float = DEFAULT_BACKGROUND_RADIUS,
-    val targetCircleColor: Color = Color.White
+    val targetColor: Color = Color.White,
+    val targetShape: TargetShape = TargetShape.Circle
 ) {
 
     fun copy(
         backgroundColor: Color = this.backgroundColor,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         backgroundAlpha: Float = this.backgroundAlpha,
-        targetCircleColor: Color = this.targetCircleColor
+        targetColor: Color = this.targetColor,
+        targetShape: TargetShape = this.targetShape
     ): ShowcaseStyle {
 
         return ShowcaseStyle(
             backgroundColor = backgroundColor,
             backgroundAlpha = backgroundAlpha,
-            targetCircleColor = targetCircleColor
+            targetColor = targetColor,
+            targetShape = targetShape
         )
     }
 
