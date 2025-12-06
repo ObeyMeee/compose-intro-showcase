@@ -15,13 +15,23 @@ The library is inspired by the [TapTargetView](https://github.com/KeepSafe/TapTa
 
 ## Configuration
 
-Available on [Maven Central](https://search.maven.org/artifact/com.canopas.intro-showcase-view/introshowcaseview).
+Available via [JitPack](https://jitpack.io/#ObeyMeee/compose-intro-showcase).
 
-Add the dependency
+Add JitPack repository to your root `build.gradle` or `settings.gradle`:
 ```gradle
-    implementation 'com.canopas.intro-showcase-view:introshowcaseview:2.0.1'
-
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 ```
+
+Add the dependency:
+```gradle
+dependencies {
+    implementation 'com.github.ObeyMeee:compose-intro-showcase:Tag'
+}
+```
+
+Replace `Tag` with the latest release version or commit hash.
 # Documentation
 Please see [sample application](https://github.com/canopas/Intro-showcase-view/tree/master/app) and [the website](https://canopas.github.io/compose-intro-showcase/) for more information.
 

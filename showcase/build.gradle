@@ -1,14 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'com.github.dcendents.android-maven'
 }
 
-ext {
-    PUBLISH_GROUP_ID = 'com.canopas.intro-showcase-view'
-    PUBLISH_ARTIFACT_ID = 'introshowcaseview'
-}
-
-apply from: "${rootDir}/scripts/publish-module.gradle"
+group = 'com.github.ObeyMeee'
 
 android {
     namespace = "com.canopas.lib.showcase"
