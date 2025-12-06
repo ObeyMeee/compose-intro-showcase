@@ -5,6 +5,7 @@ plugins {
 }
 
 group = 'com.github.ObeyMeee'
+version = project.hasProperty('version') ? project.property('version') : 'unspecified'
 
 android {
     namespace = "com.canopas.lib.showcase"
@@ -47,7 +48,6 @@ android {
 }
 
 dependencies {
-
     implementation platform("androidx.compose:compose-bom:$compose_bom_version")
 
     implementation 'androidx.core:core-ktx:1.12.0'
@@ -62,4 +62,17 @@ dependencies {
     implementation "androidx.compose.material:material"
     implementation "androidx.compose.ui:ui-tooling-preview"
     implementation "androidx.compose.material:material-icons-extended"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.ObeyMeee'
+                artifactId = 'showcase'
+                version = project.version
+            }
+        }
+    }
 }
