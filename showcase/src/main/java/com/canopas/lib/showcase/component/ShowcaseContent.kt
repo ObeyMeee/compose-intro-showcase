@@ -87,7 +87,7 @@ internal fun ShowcaseContent(
 
     val maxDimension =
         max(targetCords.size.width.absoluteValue, targetCords.size.height.absoluteValue)
-    val targetRadius = maxDimension / 2f + 40f
+    val targetRadius = maxDimension / 2f + 8f
 
     val animationSpec = infiniteRepeatable<Float>(
         animation = tween(2000, easing = FastOutLinearInEasing),
@@ -282,7 +282,6 @@ private fun ShowCaseText(
     targetRadius: Float,
     updateContentCoordinates: (LayoutCoordinates) -> Unit
 ) {
-
     var contentOffsetY by remember(currentTarget) { mutableFloatStateOf(0f) }
 
     Box(
@@ -295,18 +294,16 @@ private fun ShowCaseText(
                 updateContentCoordinates(it)
                 val contentHeight = it.size.height
 
-                val possibleTop =
-                    boundsInParent.center.y - targetRadius - contentHeight
+                val possibleTop = boundsInParent.center.y - targetRadius - contentHeight
 
                 contentOffsetY = if (possibleTop > 0) {
                     possibleTop
                 } else {
-                    boundsInParent.center.y + targetRadius
+                    boundsInParent.bottom + 16f
                 }
             }
             .padding(16.dp)
     )
-
 }
 
 private fun getOuterRect(contentRect: Rect, targetRect: Rect): Rect {
