@@ -87,7 +87,8 @@ internal fun ShowcaseContent(
 
     val maxDimension =
         max(targetCords.size.width.absoluteValue, targetCords.size.height.absoluteValue)
-    val targetRadius = maxDimension / 2f + 8f
+
+    val targetRadius = maxDimension / 2f + target.style.targetPaddingPx
 
     val animationSpec = infiniteRepeatable<Float>(
         animation = tween(2000, easing = FastOutLinearInEasing),
@@ -284,6 +285,8 @@ private fun ShowCaseText(
 ) {
     var contentOffsetY by remember(currentTarget) { mutableFloatStateOf(0f) }
 
+    val contentGap = currentTarget.style.targetPaddingPx
+
     Box(
         content = currentTarget.content,
         modifier = Modifier
@@ -299,7 +302,7 @@ private fun ShowCaseText(
                 contentOffsetY = if (possibleTop > 0) {
                     possibleTop
                 } else {
-                    boundsInParent.bottom + 16f
+                    boundsInParent.bottom + contentGap
                 }
             }
             .padding(16.dp)
@@ -338,22 +341,29 @@ class ShowcaseStyle(
     /*@FloatRange(from = 0.0, to = 1.0)*/
     val backgroundAlpha: Float = DEFAULT_BACKGROUND_RADIUS,
     val targetColor: Color = Color.White,
-    val targetShape: TargetShape = TargetShape.Circle
+    val targetShape: TargetShape = TargetShape.Circle,
+    val targetPadding: Dp = 0.dp,
 ) {
+
+    val targetPaddingPx: Float
+        @Composable
+        get() = with(LocalDensity.current) { targetPadding.toPx() }
 
     fun copy(
         backgroundColor: Color = this.backgroundColor,
         /*@FloatRange(from = 0.0, to = 1.0)*/
         backgroundAlpha: Float = this.backgroundAlpha,
         targetColor: Color = this.targetColor,
-        targetShape: TargetShape = this.targetShape
+        targetShape: TargetShape = this.targetShape,
+        targetPadding: Dp = this.targetPadding,
     ): ShowcaseStyle {
 
         return ShowcaseStyle(
             backgroundColor = backgroundColor,
             backgroundAlpha = backgroundAlpha,
             targetColor = targetColor,
-            targetShape = targetShape
+            targetShape = targetShape,
+            targetPadding = targetPadding,
         )
     }
 
